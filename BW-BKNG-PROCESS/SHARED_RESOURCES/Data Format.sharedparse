@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BWSharedResource xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <name>Data Format</name>
+    <resourceType>ae.shared.ParseSharedResource</resourceType>
+    <config xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <FormatType>Delimiter separated</FormatType>
+        <ColumnSeparator>,</ColumnSeparator>
+        <ColSeparatorRule>Treat all characters as entered as a single column separator string</ColSeparatorRule>
+        <LineSeparator>
+</LineSeparator>
+        <FillCharacter>Space</FillCharacter>
+        <DataFormat>
+            <xsd:element name="root">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="BookingID" type="xsd:int"/>
+                        <xsd:element name="BookingNo" type="xsd:int"/>
+                        <xsd:element name="BookingDate" type="xsd:time"/>
+                        <xsd:element name="Receiver" type="xsd:string"/>
+                        <xsd:element name="LoadDate" type="xsd:time"/>
+                        <xsd:element name="UnloadDate" type="xsd:time"/>
+                        <xsd:element name="ShipName" type="xsd:string"/>
+                        <xsd:element name="PortOfLoad" type="xsd:string"/>
+                        <xsd:element name="PortOfUnload" type="xsd:string"/>
+                        <xsd:element name="DBInsertTime" type="xsd:time"/>
+                        <xsd:element name="DBUpdateTime" type="xsd:time"/>
+                        <xsd:element name="DBDeleted" type="xsd:time"/>
+                        <xsd:element name="Container" type="xsd:string"/>
+                        <xsd:element name="Temperature" type="xsd:int"/>
+                        <xsd:element name="OtherDetails" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </DataFormat>
+    </config>
+</BWSharedResource>

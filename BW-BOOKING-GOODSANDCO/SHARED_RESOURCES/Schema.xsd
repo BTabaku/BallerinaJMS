@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	 xmlns="http://www.tibco.com/schemas/BW-BKNG-PROCESS/SHARED_RESOURCES/Schema.xsd"
+	 targetNamespace="http://www.tibco.com/schemas/BW-BKNG-PROCESS/SHARED_RESOURCES/Schema.xsd"
+	 elementFormDefault="qualified"
+	 attributeFormDefault="unqualified">
+	<xs:element name="root">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="booking"/>
+				<xs:element ref="bookingcontainers"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="booking">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="BookingID"/>
+				<xs:element ref="BookingNo"/>
+				<xs:element ref="BookingDate"/>
+				<xs:element ref="Receiver"/>
+				<xs:element ref="LoadDate"/>
+				<xs:element ref="UnloadDate"/>
+				<xs:element ref="ShipName"/>
+				<xs:element ref="PortOfLoad"/>
+				<xs:element ref="PortOfUnload"/>
+				<xs:element ref="DBInsertTime"/>
+				<xs:element ref="DBUpdateTime"/>
+				<xs:element ref="DBDeleted"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="bookingcontainers">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Container"/>
+				<xs:element ref="Temperature"/>
+				<xs:element ref="OtherDetails"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="BookingID" type="xs:int"/>
+	<xs:element name="BookingNo" type="xs:int"/>
+	<xs:element name="BookingDate" type="xs:dateTime"/>
+	<xs:element name="Receiver" type="xs:string"/>
+	<xs:element name="LoadDate" type="xs:dateTime"/>
+	<xs:element name="UnloadDate" type="xs:dateTime"/>
+	<xs:element name="ShipName" type="xs:string"/>
+	<xs:element name="PortOfLoad" type="xs:string"/>
+	<xs:element name="PortOfUnload" type="xs:string"/>
+	<xs:element name="DBInsertTime" type="xs:dateTime"/>
+	<xs:element name="DBUpdateTime" type="xs:dateTime"/>
+	<xs:element name="DBDeleted" type="xs:boolean"/>
+	<xs:element name="Container" type="xs:string"/>
+	<xs:element name="Temperature" type="xs:int"/>
+	<xs:element name="OtherDetails" type="xs:string"/>
+</xs:schema>

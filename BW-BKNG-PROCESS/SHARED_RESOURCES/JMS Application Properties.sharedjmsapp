@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BWSharedResource>
+    <name>JMS Application Properties</name>
+    <resourceType>ae.shared.JMSAppPropResource</resourceType>
+    <config/>
+</BWSharedResource>

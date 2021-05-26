@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:pfx="http://www.tibco.com/schemas/BW-BKNG-PROCESS/SHARED_RESOURCES/Schema.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:pfx2="http://www.tibco.com/ns/no_namespace_schema_location/SHARED_RESOURCES/Data Format.sharedparse" xmlns:ns="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns0="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:ns1="http://www.tibco.com/namespaces/tnt/plugins/file">
+    <xsd:import namespace="http://www.tibco.com/ns/no_namespace_schema_location/SHARED_RESOURCES/Data Format.sharedparse" schemaLocation="/SHARED_RESOURCES/Data Format.sharedparse"/>
+    <xsd:import namespace="http://www.tibco.com/schemas/BW-BKNG-PROCESS/SHARED_RESOURCES/Schema.xsd" schemaLocation="/SHARED_RESOURCES/Schema.xsd"/>
+    <pd:name>GENERAL_ACTIVITIES/XML_CONVERTER_BACKUP.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startX>72</pd:startX>
+    <pd:startY>54</pd:startY>
+    <pd:returnBindings>
+        <root>
+            <param>
+                <xsl:value-of select="tib:render-xml($iteration_output/AccumulatedOutput)"/>
+            </param>
+        </root>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="param" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:endType>
+    <pd:endX>799</pd:endX>
+    <pd:endY>186</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1619704439376</pd:targetNamespace>
+    <pd:group name="Group">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>193</pd:x>
+        <pd:y>23</pd:y>
+        <pd:width>494</pd:width>
+        <pd:height>327</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>inputLoop</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+            <pd:over>$JDBC-Query/resultSet/Record</pd:over>
+            <pd:iterationElementSlot>current_element</pd:iterationElementSlot>
+            <pd:indexSlot>i</pd:indexSlot>
+            <pd:outSlot>iteration_output</pd:outSlot>
+            <pd:activityOutputName>Map Data</pd:activityOutputName>
+            <pd:accumulateOutput>true</pd:accumulateOutput>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>Map Data</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>JMS Topic Publisher</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Catch</pd:from>
+            <pd:to>Log-1</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Log-1</pd:from>
+            <pd:to>Rethrow</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Map Data</pd:from>
+            <pd:to>Write File</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Write File</pd:from>
+            <pd:to>JMS Topic Publisher</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:activity name="Map Data">
+            <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+            <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+            <pd:x>305</pd:x>
+            <pd:y>129</pd:y>
+            <config>
+                <element>
+                    <xsd:element name="root">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element ref="pfx:databasebooking"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </element>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <xsl:for-each select="$i">
+                        <pfx:databasebooking>
+                            <pfx:booking>
+                                <pfx:BookingID>
+                                    <xsl:value-of select="$current_element/Record/BookingID"/>
+                                </pfx:BookingID>
+                                <pfx:BookingNo>
+                                    <xsl:value-of select="$current_element/Record/BookingNo"/>
+                                </pfx:BookingNo>
+                                <pfx:BookingDate>
+                                    <xsl:value-of select="$current_element/Record/BookingDate"/>
+                                </pfx:BookingDate>
+                                <pfx:Receiver>
+                                    <xsl:value-of select="$current_element/Record/Receiver"/>
+                                </pfx:Receiver>
+                                <pfx:LoadDate>
+                                    <xsl:value-of select="$current_element/Record/LoadDate"/>
+                                </pfx:LoadDate>
+                                <pfx:UnloadDate>
+                                    <xsl:value-of select="$current_element/Record/UnloadDate"/>
+                                </pfx:UnloadDate>
+                                <pfx:ShipName>
+                                    <xsl:value-of select="$current_element/Record/ShipName"/>
+                                </pfx:ShipName>
+                                <pfx:PortOfLoad>
+                                    <xsl:value-of select="$current_element/Record/PortOfLoad"/>
+                                </pfx:PortOfLoad>
+                                <pfx:PortOfUnload>
+                                    <xsl:value-of select="$current_element/Record/PortOfUnload"/>
+                                </pfx:PortOfUnload>
+                                <pfx:DBInsertTime>
+                                    <xsl:value-of select="$current_element/Record/DBInsertTime"/>
+                                </pfx:DBInsertTime>
+                                <pfx:DBUpdateTime>
+                                    <xsl:value-of select="$current_element/Record/DBUpdateTime"/>
+                                </pfx:DBUpdateTime>
+                                <pfx:DBDeleted>
+                                    <xsl:value-of select="$current_element/Record/DBDeleted"/>
+                                </pfx:DBDeleted>
+                            </pfx:booking>
+                            <pfx:bookingcontainers>
+                                <pfx:Container>
+                                    <xsl:value-of select="$current_element/Record/Container"/>
+                                </pfx:Container>
+                                <pfx:Temperature>
+                                    <xsl:value-of select="$current_element/Record/Temperature"/>
+                                </pfx:Temperature>
+                                <pfx:OtherDetails>
+                                    <xsl:value-of select="$current_element/Record/OtherDetails"/>
+                                </pfx:OtherDetails>
+                            </pfx:bookingcontainers>
+                        </pfx:databasebooking>
+                    </xsl:for-each>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Log-1">
+            <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+            <pd:resourceType>ae.activities.log</pd:resourceType>
+            <pd:x>433</pd:x>
+            <pd:y>242</pd:y>
+            <config>
+                <role>User</role>
+            </config>
+            <pd:inputBindings>
+                <ns:ActivityInput>
+                    <message>
+                        <xsl:value-of select="&quot;FAILED!&quot;"/>
+                    </message>
+                    <msgCode>
+                        <xsl:value-of select="$Catch/exceptiondata/*"/>
+                    </msgCode>
+                </ns:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Catch">
+            <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+            <pd:resourceType>ae.activities.catch</pd:resourceType>
+            <pd:x>302</pd:x>
+            <pd:y>239</pd:y>
+            <pd:handler>true</pd:handler>
+            <config>
+                <catchAll>true</catchAll>
+            </config>
+            <pd:inputBindings/>
+        </pd:activity>
+        <pd:activity name="Rethrow">
+            <pd:type>com.tibco.pe.core.RethrowActivity</pd:type>
+            <pd:resourceType>ae.activities.rethrow</pd:resourceType>
+            <pd:x>561</pd:x>
+            <pd:y>242</pd:y>
+            <config/>
+            <pd:inputBindings/>
+        </pd:activity>
+        <pd:activity name="Write File">
+            <pd:type>com.tibco.plugin.file.FileWriteActivity</pd:type>
+            <pd:resourceType>ae.activities.FileWriteActivity</pd:resourceType>
+            <pd:x>433</pd:x>
+            <pd:y>128</pd:y>
+            <config>
+                <encoding>text</encoding>
+                <compressFile>None</compressFile>
+                <append>false</append>
+            </config>
+            <pd:inputBindings>
+                <ns1:WriteActivityInputTextClass>
+                    <fileName>
+                        <xsl:value-of select="'C:\Users\U754744\Documents\testOut.xml'"/>
+                    </fileName>
+                    <textContent>
+                        <xsl:value-of select="tib:render-xml($current_element/Record)"/>
+                    </textContent>
+                </ns1:WriteActivityInputTextClass>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="JMS Topic Publisher">
+            <pd:type>com.tibco.plugin.jms.JMSTopicPublishActivity</pd:type>
+            <pd:resourceType>ae.activities.JMSTopicPublishActivity</pd:resourceType>
+            <pd:x>560</pd:x>
+            <pd:y>132</pd:y>
+            <config>
+                <PermittedMessageType>XML Text</PermittedMessageType>
+                <SessionAttributes>
+                    <transacted>false</transacted>
+                    <acknowledgeMode>1</acknowledgeMode>
+                    <maxSessions>1</maxSessions>
+                    <destination>BOOKING.GOODSANDCO.T</destination>
+                </SessionAttributes>
+                <ConfigurableHeaders>
+                    <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                    <JMSExpiration>0</JMSExpiration>
+                    <JMSPriority>4</JMSPriority>
+                </ConfigurableHeaders>
+                <ConnectionReference>/SHARED_RESOURCES/JMS Connection.sharedjmscon</ConnectionReference>
+                <ApplicationProperties>/SHARED_RESOURCES/JMS Application Properties.sharedjmsapp</ApplicationProperties>
+                <InDataxsdString>
+                    <xsd:element name="record">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element ref="pfx:databasebooking"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </InDataxsdString>
+            </config>
+            <pd:inputBindings>
+                <ns0:ActivityInput>
+                    <Body>
+                        <record>
+                            <pfx:databasebooking>
+                                <pfx:booking>
+                                    <pfx:BookingID>
+                                        <xsl:value-of select="$current_element/Record/BookingID"/>
+                                    </pfx:BookingID>
+                                    <pfx:BookingNo>
+                                        <xsl:value-of select="$current_element/Record/BookingNo"/>
+                                    </pfx:BookingNo>
+                                    <pfx:BookingDate>
+                                        <xsl:value-of select="$current_element/Record/BookingDate"/>
+                                    </pfx:BookingDate>
+                                    <pfx:Receiver>
+                                        <xsl:value-of select="$current_element/Record/Receiver"/>
+                                    </pfx:Receiver>
+                                    <pfx:LoadDate>
+                                        <xsl:value-of select="$current_element/Record/LoadDate"/>
+                                    </pfx:LoadDate>
+                                    <pfx:UnloadDate>
+                                        <xsl:value-of select="$current_element/Record/UnloadDate"/>
+                                    </pfx:UnloadDate>
+                                    <pfx:ShipName>
+                                        <xsl:value-of select="$current_element/Record/ShipName"/>
+                                    </pfx:ShipName>
+                                    <pfx:PortOfLoad>
+                                        <xsl:value-of select="$current_element/Record/PortOfLoad"/>
+                                    </pfx:PortOfLoad>
+                                    <pfx:PortOfUnload>
+                                        <xsl:value-of select="$current_element/Record/PortOfUnload"/>
+                                    </pfx:PortOfUnload>
+                                    <pfx:DBInsertTime>
+                                        <xsl:value-of select="$current_element/Record/DBInsertTime"/>
+                                    </pfx:DBInsertTime>
+                                    <pfx:DBUpdateTime>
+                                        <xsl:value-of select="$current_element/Record/DBUpdateTime"/>
+                                    </pfx:DBUpdateTime>
+                                    <pfx:DBDeleted>
+                                        <xsl:value-of select="$current_element/Record/DBDeleted"/>
+                                    </pfx:DBDeleted>
+                                </pfx:booking>
+                                <pfx:bookingcontainers>
+                                    <pfx:Container>
+                                        <xsl:value-of select="$current_element/Record/Container"/>
+                                    </pfx:Container>
+                                    <pfx:Temperature>
+                                        <xsl:value-of select="$current_element/Record/Temperature"/>
+                                    </pfx:Temperature>
+                                    <pfx:OtherDetails>
+                                        <xsl:value-of select="$current_element/Record/OtherDetails"/>
+                                    </pfx:OtherDetails>
+                                </pfx:bookingcontainers>
+                            </pfx:databasebooking>
+                        </record>
+                    </Body>
+                </ns0:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:activity name="JDBC Query">
+        <pd:type>com.tibco.plugin.jdbc.JDBCQueryActivity</pd:type>
+        <pd:resourceType>ae.activities.JDBCQueryActivity</pd:resourceType>
+        <pd:x>77</pd:x>
+        <pd:y>162</pd:y>
+        <config>
+            <timeout>10</timeout>
+            <commit>false</commit>
+            <maxRows>100</maxRows>
+            <emptyStrAsNil>false</emptyStrAsNil>
+            <statement>select * from booking  JOIN bookingcontainers USING (BookingNo) order by BookingID ASC</statement>
+            <jdbcSharedConfig>/JDBC/JDBC Connection.sharedjdbc</jdbcSharedConfig>
+            <Prepared_Param_DataType/>
+            <wizardData/>
+            <oraObjects/>
+            <oraTables/>
+            <QueryOutputCachedSchemaColumns>BookingNo</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>4</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>INT</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>RequiredElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>BookingID</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>4</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>INT</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>RequiredElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>BookingDate</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>93</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>DATETIME</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>Receiver</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>1</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>CHAR</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>RequiredElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>LoadDate</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>93</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>DATETIME</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>UnloadDate</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>93</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>DATETIME</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>ShipName</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>1</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>CHAR</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>PortOfLoad</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>1</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>CHAR</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>PortOfUnload</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>1</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>CHAR</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>DBInsertTime</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>93</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>DATETIME</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>DBUpdateTime</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>93</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>DATETIME</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>DBDeleted</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>-6</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>TINYINT</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>Container</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>1</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>CHAR</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>RequiredElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>Temperature</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>4</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>INT</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>RequiredElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>OtherDetails</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>-1</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>LONGTEXT</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+        </config>
+        <pd:inputBindings>
+            <jdbcQueryActivityInput/>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log-2-2">
+        <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+        <pd:resourceType>ae.activities.log</pd:resourceType>
+        <pd:x>803</pd:x>
+        <pd:y>392</pd:y>
+        <config>
+            <role>User</role>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <message>
+                    <xsl:value-of select="&quot;All Error&quot;"/>
+                </message>
+                <msgCode>
+                    <xsl:value-of select="$Catch-1/exceptiondata/*"/>
+                </msgCode>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch-1">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>595</pd:x>
+        <pd:y>396</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>JDBC Query</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch-1</pd:from>
+        <pd:to>Log-2-2</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log-2-2</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JDBC Query</pd:from>
+        <pd:to>Group</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>
